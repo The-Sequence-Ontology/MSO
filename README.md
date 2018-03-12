@@ -11,5 +11,5 @@ The latest version of the Sequence Ontology is still to be found at:
 https://github.com/The-Sequence-Ontology/SO-Ontologies
 
 ## Contact
-Please use this GitHub repository's [Issue tracker](https://github.com/msinclair2/so-refactored/issues) to provide feedback on the proposed ontology design in "master.owl" and its suitability for use as the MSO and for a refactored, parallel SO.
+Please use the [Issues](https://github.com/The-Sequence-Ontology/MSO/issues) tab to provide feedback on the proposed ontology design in "master.owl" and its suitability for use as the MSO and for a refactored, parallel SO.
 
