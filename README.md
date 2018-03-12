@@ -1,4 +1,4 @@
-# so-refactored
+# MSO
 
 This is the primary repository for the Molecular Sequence Ontology (MSO), an ontology in development for the description of the physical molecules that contain biologically relevant sequence, and their properties. Eventually we hope to automatically generated a refactored version of the Sequence Ontology (SO) alongside the MSO from a single master file. This is still a work in progress, and the repository also contains the OWL API project for writing the program for the auto-generate task. The output files (MSO.owl and SO_refactored.owl) are not yet ready for release.
 
