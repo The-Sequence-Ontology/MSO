@@ -1,16 +1,12 @@
 package com.so_refactored.java;
 
-import org.obolibrary.robot.IOHelper;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.search.EntitySearcher;
-//import org.semanticweb.owlapi.util.OWLEntityRenamer;
 import org.semanticweb.owlapi.util.OWLObjectTransformer;
 import org.semanticweb.owlapi.util.OWLOntologyIRIChanger;
-import uk.ac.manchester.cs.owl.owlapi.OWLAnnotationPropertyImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
 
-import java.io.IOException;
 import java.util.*;
 
 //import static java.util.Collections.singleton;
@@ -25,9 +21,6 @@ public class SOGenerator {
 
         // Create a data factory for many information retrieval and editing tasks in the OWL API.
         OWLDataFactory dataFactory = manager.getOWLDataFactory();
-
-        // Create an ID changer to edit master file IRIs to sequence ontology namespace IRIs.
-        IDChanger idChanger = new IDChanger();
 
         // Retrieve the IRI for the only represented in MSO boolean annotation. This IRI should be static.
         IRI onlyInMSOIRI = IRI.create("http://purl.obolibrary.org/obo/MSO_3100075");
@@ -190,8 +183,8 @@ public class SOGenerator {
                     // Every object in the ontology is checked. If it is of type IRI, execute the code block.
                     if (input != null) {
 
-                        // Invoke the IDChanger to replace "MSO" with "SO".
-                        String newIRI = idChanger.changeIRIs(input.toString());
+                        // Replace "MSO" with "SO" in the IRI string.
+                        String newIRI = input.toString().replaceAll("MSO_","SO_");
 
                         // Avoid a null pointer exception.
                         if (newIRI != null) {
