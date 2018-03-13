@@ -4,7 +4,7 @@ This is the primary repository for the Molecular Sequence Ontology (MSO), an ont
 
 In the meantime, the community is invited to explore and comment on the master file, "master.owl", located in the root of the repository. This ontology must be reasoned over with FaCT++ or JFact. The inferred ontology is essentially what is proposed for the final MSO, with a refactored, parallel SO to be derived from it. We welcome feedback on the consistency and appropriateness of this structure for the MSO and SO.
 
-Comments on the code are also welcome. It is not completely cleaned up yet (for example, some duplicated code that should be resolved into separate functions). But more importantly, as we am new to the OWL API, and there are multiple ways to do things, any suggestions from those who are more proficient as to best practices or the most convenient methods to use would be greatly appreciated.
+Comments on the code are also welcome. It is not completely cleaned up yet (for example, some duplicated code that should be resolved into separate functions). But more importantly, as we are new to the OWL API, and there are multiple ways to do things, any suggestions from those who are more proficient as to best practices or the most convenient methods to use would be greatly appreciated.
 
 ### Stable release versions
 
