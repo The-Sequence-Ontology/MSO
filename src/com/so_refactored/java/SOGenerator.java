@@ -31,6 +31,12 @@ public class SOGenerator {
         // Retrieve the IRI for the generically depends on object property. This IRI should be static.
         IRI genericallyDependsIRI = IRI.create("http://purl.obolibrary.org/obo/SO_6000000");
 
+        // Retrieve the IRI for generically dependent continuant. This IRI should be static.
+        IRI genericallyDependentContinuantIRI = IRI.create("http://purl.obolibrary.org/obo/BFO_0000031");
+
+        // Get generically dependent continuant as a class.
+        OWLClass genericallyDependentContinuant = dataFactory.getOWLClass(genericallyDependentContinuantIRI);
+
         // Retrieve the AnnotationProperty object for the only represented in SO, MSO, and genericallyDepends properties.
         // Create empty objects to store the references later.
         OWLAnnotationProperty onlyInSO = null;
@@ -78,7 +84,7 @@ public class SOGenerator {
 
         //region This region generates the SO ontology from the objects prepared in the previous section.
 
-        // Loop through all the classes in the master ontology and remove those that contain the onlyInMSOIRI
+        // Loop through all the classes in the master ontology and remove those that contain the onlyInMSO
         // annotation. As we proceed with transforming the master ontology into the SO, we'll refer to it as the
         // working ontology.
         for (OWLClass cls : masterClasses) {
@@ -104,7 +110,7 @@ public class SOGenerator {
 
                         RemoveAxiom removeAxiom = new RemoveAxiom(master, MSOAxiom);
 
-                        master.getOWLOntologyManager().applyChange(removeAxiom);
+                        manager.applyChange(removeAxiom);
                     }
 
                     // We have removed the class so there's no need to continue checking annotations. Move to the next
@@ -119,7 +125,18 @@ public class SOGenerator {
                 // property (unless the curator seriously screwed up). We want to keep track of classes that have neither
                 // annotation. That means they are classes to which generic dependence from the SO counterpart to the
                 // MSO counterpart should be added.
+
+                // Another thing. Those classes that are only in SO will not get a generically depends on equivalent
+                // class axiom. Yet, they are generically dependent continuant. So we need to add a SubClassOf axiom
+                // in order to make sure they are properly classified.
                 if (annProp.equals(onlyInSO)) {
+
+                    OWLSubClassOfAxiom subClassOfAxiom = dataFactory.getOWLSubClassOfAxiom(cls,
+                            genericallyDependentContinuant);
+
+                    AddAxiom addAxiom = new AddAxiom(master, subClassOfAxiom);
+
+                    manager.applyChange(addAxiom);
 
                     break;
                 }
@@ -157,7 +174,7 @@ public class SOGenerator {
 
                 RemoveAxiom removeAxiom = new RemoveAxiom(master, onlyInSOAxiom);
 
-                master.getOWLOntologyManager().applyChange(removeAxiom);
+                manager.applyChange(removeAxiom);
             }
         }
 
@@ -169,7 +186,7 @@ public class SOGenerator {
 
                 RemoveAxiom removeAxiom = new RemoveAxiom(master, onlyInMSOAxiom);
 
-                master.getOWLOntologyManager().applyChange(removeAxiom);
+                manager.applyChange(removeAxiom);
             }
         }
 
@@ -184,7 +201,7 @@ public class SOGenerator {
                     if (input != null) {
 
                         // Replace "MSO" with "SO" in the IRI string.
-                        String newIRI = input.toString().replaceAll("MSO_","SO_");
+                        String newIRI = input.toString().replaceAll("MSO_", "SO_");
 
                         // Avoid a null pointer exception.
                         if (newIRI != null) {
@@ -209,10 +226,31 @@ public class SOGenerator {
         // Apply the IRI replacements.
         manager.applyChanges(changes);
 
-        // Now we add generically_depends_on equivalent class axioms to each class in our working ontology.
-        // We have to build up the equivalent class axiom that will assert that each SO class, as subject, depends on
-        // some MSO class with the same ID number. We'll need to first create an OWLObjectSomeValuesFrom expression,
-        // containing a reference to the property and a filler with the target MSO class.
+        // Since we will use the generically depends on relation to create equivalentTo axioms and use those to
+        // classify the SO, it's important to remove all other equivalentTo axioms that are carried over from the
+        // master file to avoid logical conflicts.
+
+        // Update the set of classes in the signature of the working ontology since it has changed since it was first
+        // loaded.
+        for (OWLClass clsSO : master.getClassesInSignature()) {
+
+            // retrieve all EquivalentClasses axioms on the class.
+            Set<OWLEquivalentClassesAxiom> equivalentClassesAxioms = master.getEquivalentClassesAxioms(clsSO);
+
+            // Remove all the axioms in the set.
+            for (OWLEquivalentClassesAxiom equivalentClassesAxiom : equivalentClassesAxioms) {
+
+                RemoveAxiom removeAxiom = new RemoveAxiom(master, equivalentClassesAxiom);
+
+                manager.applyChange(removeAxiom);
+
+            }
+        }
+
+        /* Now we add generically_depends_on equivalent class axioms to each class in our working ontology.
+           We have to build up the equivalent class axiom that will assert that each SO class, as subject, depends on
+           some MSO class with the same ID number. We'll need to first create an OWLObjectSomeValuesFrom expression,
+           containing a reference to the property and a filler with the target MSO class. */
 
         // Loop through the set of overlapping classes.
         for (OWLClass clsMSO : overlappingClasses) {
@@ -249,7 +287,7 @@ public class SOGenerator {
         separate file. */
 
         // Retrieve the working ontology's manager to change its IRI.
-        OWLOntologyIRIChanger IRIchanger = new OWLOntologyIRIChanger(master.getOWLOntologyManager());
+        OWLOntologyIRIChanger IRIchanger = new OWLOntologyIRIChanger(manager);
 
         // Get OWLOntologyChange object to effect a change in IRI.
         List<OWLOntologyChange> IRIchanges = IRIchanger.getChanges(master, idSO);
