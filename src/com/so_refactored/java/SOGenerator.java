@@ -1,18 +1,19 @@
 package com.so_refactored.java;
 
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.OWLObjectTransformer;
 import org.semanticweb.owlapi.util.OWLOntologyIRIChanger;
-import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
+import uk.ac.manchester.cs.jfact.JFactFactory;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
 
 import java.util.*;
 
 //import static java.util.Collections.singleton;
 
-public class SOGenerator {
-    public OWLOntology generateSO(OWLOntology master) {
+class SOGenerator {
+    OWLOntology generateSO(OWLOntology master) {
 
         //region This region prepares all objects necessary for the generation of SO from the master file
 
@@ -36,6 +37,12 @@ public class SOGenerator {
 
         // Get generically dependent continuant as a class.
         OWLClass genericallyDependentContinuant = dataFactory.getOWLClass(genericallyDependentContinuantIRI);
+
+        // Retrieve the IRI for specifically dependent continuant. This IRI should be static.
+        IRI specificallyDependentContinuantIRI = IRI.create("http://purl.obolibrary.org/obo/BFO_0000020");
+
+        // Get specifically dependent continuant as a class.
+        OWLClass specificallyDependentContinuant = dataFactory.getOWLClass(specificallyDependentContinuantIRI);
 
         // Retrieve the AnnotationProperty object for the only represented in SO, MSO, and genericallyDepends properties.
         // Create empty objects to store the references later.
@@ -204,13 +211,11 @@ public class SOGenerator {
                         String newIRI = input.toString().replaceAll("MSO_", "SO_");
 
                         // Avoid a null pointer exception.
-                        if (newIRI != null) {
 
-                            return IRI.create(newIRI);
-                        }
+                        return IRI.create(newIRI);
                     }
 
-                    return input;
+                    return null;
                 },
 
                 // Required argument for the constructor.
@@ -226,6 +231,27 @@ public class SOGenerator {
         // Apply the IRI replacements.
         manager.applyChanges(changes);
 
+        /* We have to now retrieve the set of all specifically dependent continuants to ensure that they do not get a generic dependence axiom added to them nor have their equivalent to axioms removed. We will use a reasoner to obtain all subclasses of "specifically dependent continuant" and add them to our set. */
+        OWLReasonerConfiguration config = new SimpleConfiguration();
+
+        OWLReasonerFactory reasonerFactory = new JFactFactory();
+
+        OWLReasoner reasoner = reasonerFactory.createReasoner(master, config);
+
+        reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
+
+        NodeSet<OWLClass> subClassNodes = reasoner.getSubClasses(specificallyDependentContinuant, false);
+
+        Set<OWLClass> specificallyDependentContinuants = subClassNodes.getFlattened();
+
+        System.out.println(specificallyDependentContinuants.toString());
+
+        // To get rid of the reasoned ontology revert back to the root.
+        master = reasoner.getRootOntology();
+
+        // Dispose of the reasoner.
+        reasoner.dispose();
+
         // Since we will use the generically depends on relation to create equivalentTo axioms and use those to
         // classify the SO, it's important to remove all other equivalentTo axioms that are carried over from the
         // master file to avoid logical conflicts.
@@ -233,6 +259,9 @@ public class SOGenerator {
         // Update the set of classes in the signature of the working ontology since it has changed since it was first
         // loaded.
         for (OWLClass clsSO : master.getClassesInSignature()) {
+
+            // If the class is a specifically dependent continuant, continue.
+            if (specificallyDependentContinuants.contains(clsSO)) continue;
 
             // retrieve all EquivalentClasses axioms on the class.
             Set<OWLEquivalentClassesAxiom> equivalentClassesAxioms = master.getEquivalentClassesAxioms(clsSO);
@@ -263,7 +292,10 @@ public class SOGenerator {
                 IRI iriSO = IRI.create(clsMSO.getIRI().toString().replace("MSO_", "SO_"));
 
                 // Create the corresponding SO class out of the IRI above.
-                OWLClassImpl clsSO = new OWLClassImpl(iriSO);
+                OWLClass clsSO = dataFactory.getOWLClass(iriSO);
+
+                // If this class exists as a specifically dependent continuant, continue.
+                if (specificallyDependentContinuants.contains(clsSO)) continue;
 
                 // Create the equivalent class axiom equating the SO class with the object property restriction.
                 OWLEquivalentClassesAxiom axiom = dataFactory.getOWLEquivalentClassesAxiom(clsSO, someValues);
