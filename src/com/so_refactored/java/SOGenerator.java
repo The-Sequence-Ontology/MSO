@@ -44,6 +44,12 @@ class SOGenerator {
         // Get specifically dependent continuant as a class.
         OWLClass specificallyDependentContinuant = dataFactory.getOWLClass(specificallyDependentContinuantIRI);
 
+        // Retrieve the IRI for biological sequence entity in the SO.
+        IRI biologicalSequenceEntityIRI = IRI.create("http://purl.obolibrary.org/obo/SO_3000265");
+
+        // Get biological sequence entity as a class.
+        OWLClass biologicalSequenceEntity = dataFactory.getOWLClass(biologicalSequenceEntityIRI);
+
         // Retrieve the AnnotationProperty object for the only represented in SO, MSO, and genericallyDepends properties.
         // Create empty objects to store the references later.
         OWLAnnotationProperty onlyInSO = null;
@@ -85,6 +91,9 @@ class SOGenerator {
 
         // Retrieve all of the classes in the master ontology.
         Set<OWLClass> masterClasses = master.getClassesInSignature();
+
+        // Create a set to store those classes only in SO.
+        Set<OWLClass> onlyInSOClasses = new HashSet<>();
 
         //endregion
 
@@ -131,19 +140,10 @@ class SOGenerator {
                 // On the other hand, if the property is onlyInSO, we should break too, as it won't have the onlyInMSO
                 // property (unless the curator seriously screwed up). We want to keep track of classes that have neither
                 // annotation. That means they are classes to which generic dependence from the SO counterpart to the
-                // MSO counterpart should be added.
-
-                // Another thing. Those classes that are only in SO will not get a generically depends on equivalent
-                // class axiom. Yet, they are generically dependent continuant. So we need to add a SubClassOf axiom
-                // in order to make sure they are properly classified.
+                // MSO counterpart should be added. We will also add this class to a set of only in SO classes because we need to prevent them from losing their equivalent to axioms later on.
                 if (annProp.equals(onlyInSO)) {
 
-                    OWLSubClassOfAxiom subClassOfAxiom = dataFactory.getOWLSubClassOfAxiom(cls,
-                            genericallyDependentContinuant);
-
-                    AddAxiom addAxiom = new AddAxiom(master, subClassOfAxiom);
-
-                    manager.applyChange(addAxiom);
+                    onlyInSOClasses.add(cls);
 
                     break;
                 }
@@ -244,8 +244,6 @@ class SOGenerator {
 
         Set<OWLClass> specificallyDependentContinuants = subClassNodes.getFlattened();
 
-        System.out.println(specificallyDependentContinuants.toString());
-
         // To get rid of the reasoned ontology revert back to the root.
         master = reasoner.getRootOntology();
 
@@ -260,8 +258,27 @@ class SOGenerator {
         // loaded.
         for (OWLClass clsSO : master.getClassesInSignature()) {
 
-            // If the class is a specifically dependent continuant, continue.
+            // If the class is a specifically dependent continuant, skip this step.
             if (specificallyDependentContinuants.contains(clsSO)) continue;
+
+            // If the class is only in SO, skip it also.
+            IRI clsMSOIRI = IRI.create(clsSO.getIRI().toString().replace("SO_", "MSO_"));
+
+            OWLClass clsMSO = dataFactory.getOWLClass(clsMSOIRI);
+
+            if (onlyInSOClasses.contains(clsMSO)) continue;
+
+            // If this class is the biological sequence entity, assert that it is a subclass of generically dependent continuant for proper classification of all SO entities as generically dependent continuants under this class.
+            if (clsSO.equals(biologicalSequenceEntity)) {
+
+                OWLSubClassOfAxiom subClassOfAxiom = dataFactory.getOWLSubClassOfAxiom(clsSO,
+                        genericallyDependentContinuant);
+
+                AddAxiom addAxiom = new AddAxiom(master, subClassOfAxiom);
+
+                manager.applyChange(addAxiom);
+
+            }
 
             // retrieve all EquivalentClasses axioms on the class.
             Set<OWLEquivalentClassesAxiom> equivalentClassesAxioms = master.getEquivalentClassesAxioms(clsSO);
