@@ -351,5 +351,50 @@ class SOGenerator {
 
     }
 
+//    void compareHierarchies(OWLClass superclassA) {
+//        // Test code begin.
+//        System.out.println(subClassNodes);
+//
+//        IOHelper ioHelper = new IOHelper();
+//
+//        OWLOntology MSO = ioHelper.loadOntology("files/MSO.owl");
+//
+//        OWLOntologyManager MSOManager = MSO.getOWLOntologyManager();
+//
+//        OWLDataFactory MSODataFactory = MSOManager.getOWLDataFactory();
+//
+//        OWLObjectTransformer<IRI> MSOreplacer = new OWLObjectTransformer<>((x) -> true,
+//                (input) -> {
+//
+//                    if (input != null) {
+//
+//                        String newIRI = input.toString().replaceAll("MSO_", "SO_");
+//
+//
+//                        return IRI.create(newIRI);
+//                    }
+//
+//                    return null;
+//                },
+//
+//                MSODataFactory,
+//
+//                IRI.class);
+//
+//        List<OWLOntologyChange> MSOchanges = MSOreplacer.change(MSO);
+//
+//        MSOManager.applyChanges(MSOchanges);
+//
+//        OWLReasoner MSOreasoner = reasonerFactory.createReasoner(MSO, config);
+//
+//        MSOreasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
+//
+//        NodeSet<OWLClass> MSOsubClassNodes = MSOreasoner.getSubClasses(biologicalSequenceEntity, false);
+//
+//        System.out.println(MSOsubClassNodes);
+//
+//        System.out.println(subClassNodes.equals(MSOsubClassNodes));
+//    }
+
 }
 
