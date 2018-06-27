@@ -1,4 +1,4 @@
-package com.so_refactored.java;
+package com.MSO.java;
 
 import org.obolibrary.robot.IOHelper;
 import org.obolibrary.robot.ReasonOperation;

@@ -1,4 +1,4 @@
-package com.so_refactored.java;
+package com.MSO.java;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.search.EntitySearcher;
