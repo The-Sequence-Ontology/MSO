@@ -1,4 +1,4 @@
-# MSO
+# Molecular Sequence Ontology (MSO)
 
 This is the primary repository for the Molecular Sequence Ontology (MSO), an ontology in development for the description of the physical molecules that contain biologically relevant sequence, and their properties. MSO entities, being independent continuants, are the bearers of Sequence Ontology (SO) entities, which are generically dependent continuants.
 
