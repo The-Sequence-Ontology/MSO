@@ -7,8 +7,8 @@ import org.semanticweb.owlapi.util.OWLOntologyIRIChanger;
 import java.util.List;
 import java.util.Set;
 
-public class MSOGenerator {
-    public OWLOntology generateMSO(OWLOntology master) {
+class MSOGenerator {
+    OWLOntology generateMSO(OWLOntology master) {
 
         //region This region prepares all objects necessary for the generation of MSO from the master file
 

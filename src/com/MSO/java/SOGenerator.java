@@ -83,7 +83,7 @@ class SOGenerator {
         }
 
         // Create an IRI for the refactored sequence ontology that will be saved to disk as the output.
-        IRI idSO = IRI.create("http://purl.obolibrary.org/obo/SO_refactored.owl");
+        IRI idSO = IRI.create("http://purl.obolibrary.org/obo/SO.owl");
 
         // Create a set that will store classes that have counterparts in both ontologies. We will need the later when
         // we add generic dependence relations.
