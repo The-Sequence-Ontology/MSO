@@ -21,6 +21,7 @@ public class Main {
 
         // Invoke generateMSO.
         MSOGenerator msoGenerator = new MSOGenerator();
+
         OWLOntology MSO = msoGenerator.generateMSO(master);
 
         // Save MSO to disk.
@@ -28,6 +29,7 @@ public class Main {
 
         // Invoke the reasoner helper to reason the MSO and save to disk.
         OWLOntology MSO_reasoned = reasonerHelper.reasonMSO(ioHelper);
+
         ioHelper.saveOntology(MSO_reasoned,"files/MSO_reasoned.owl");
 
         // Reload the master ontology as it has been changed above due to passing by reference.
@@ -35,6 +37,7 @@ public class Main {
 
         // Invoke generateSO.
         SOGenerator soGenerator = new SOGenerator();
+
         OWLOntology SO = soGenerator.generateSO(master2);
 
         // Save SO to disk.
@@ -42,9 +45,11 @@ public class Main {
 
         // Invoke the reasoner helper to reason the SO and save to disk.
         OWLOntology SO_reasoned = reasonerHelper.reasonSO(ioHelper);
+
         ioHelper.saveOntology(SO_reasoned, "files/SO_reasoned.owl");
 
-
+        // Compare hierarchies of MSO and SO to make sure they are parallel.
+        reasonerHelper.qualityControl(ioHelper);
 
     }
 }
