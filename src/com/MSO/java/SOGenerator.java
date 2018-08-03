@@ -170,32 +170,32 @@ class SOGenerator {
 
         }
 
-        // The remaining classes that are not flagged as onlyInMSOIRI are retained to continue the generation process.
-        // Thus, we do not need the "only in" annotations anymore and should remove them.
-
-        // Avoid a null reference.
-        if (onlyInSO != null) {
-
-            // Loop through all axioms that reference the only in SO annotation property and remove them.
-            for (OWLAxiom onlyInSOAxiom : EntitySearcher.getReferencingAxioms(onlyInSO, master)) {
-
-                RemoveAxiom removeAxiom = new RemoveAxiom(master, onlyInSOAxiom);
-
-                manager.applyChange(removeAxiom);
-            }
-        }
-
-        // Avoid a null reference.
-        if (onlyInMSO != null) {
-
-            // Loop through all axioms that reference the only in MSO annotation property and remove them.
-            for (OWLAxiom onlyInMSOAxiom : EntitySearcher.getReferencingAxioms(onlyInMSO, master)) {
-
-                RemoveAxiom removeAxiom = new RemoveAxiom(master, onlyInMSOAxiom);
-
-                manager.applyChange(removeAxiom);
-            }
-        }
+//        // The remaining classes that are not flagged as onlyInMSOIRI are retained to continue the generation process.
+//        // Thus, we do not need the "only in" annotations anymore and should remove them.
+//
+//        // Avoid a null reference.
+//        if (onlyInSO != null) {
+//
+//            // Loop through all axioms that reference the only in SO annotation property and remove them.
+//            for (OWLAxiom onlyInSOAxiom : EntitySearcher.getReferencingAxioms(onlyInSO, master)) {
+//
+//                RemoveAxiom removeAxiom = new RemoveAxiom(master, onlyInSOAxiom);
+//
+//                manager.applyChange(removeAxiom);
+//            }
+//        }
+//
+//        // Avoid a null reference.
+//        if (onlyInMSO != null) {
+//
+//            // Loop through all axioms that reference the only in MSO annotation property and remove them.
+//            for (OWLAxiom onlyInMSOAxiom : EntitySearcher.getReferencingAxioms(onlyInMSO, master)) {
+//
+//                RemoveAxiom removeAxiom = new RemoveAxiom(master, onlyInMSOAxiom);
+//
+//                manager.applyChange(removeAxiom);
+//            }
+//        }
 
         /* Use an OWLObjectTransformer to replace every "MSO" in an IRI to "SO". We are currently working on the
            design principle that classes that are counterparts of each other in MSO and SO will have the same IRI number

@@ -82,32 +82,32 @@ class MSOGenerator {
             }
         }
 
-        // The remaining classes that are not flagged as onlyInSOIRI are retained to continue the generation process.
-        // Thus, we do not need the "only in" annotations anymore and should remove them.
-
-        // Avoid a null reference.
-        if (onlyInSO != null) {
-
-            // Loop through all axioms that reference the only in SO annotation property and remove them.
-            for (OWLAxiom onlyInSOAxiom : EntitySearcher.getReferencingAxioms(onlyInSO, master)) {
-
-                RemoveAxiom removeAxiom = new RemoveAxiom(master, onlyInSOAxiom);
-
-                master.getOWLOntologyManager().applyChange(removeAxiom);
-            }
-        }
-
-        // Avoid a null reference.
-        if (onlyInMSO != null) {
-
-            // Loop through all axioms that reference the only in MSO annotation property and remove them.
-            for (OWLAxiom onlyInMSOAxiom : EntitySearcher.getReferencingAxioms(onlyInMSO, master)) {
-
-                RemoveAxiom removeAxiom = new RemoveAxiom(master, onlyInMSOAxiom);
-
-                master.getOWLOntologyManager().applyChange(removeAxiom);
-            }
-        }
+//        // The remaining classes that are not flagged as onlyInSOIRI are retained to continue the generation process.
+//        // Thus, we do not need the "only in" annotations anymore and should remove them.
+//
+//        // Avoid a null reference.
+//        if (onlyInSO != null) {
+//
+//            // Loop through all axioms that reference the only in SO annotation property and remove them.
+//            for (OWLAxiom onlyInSOAxiom : EntitySearcher.getReferencingAxioms(onlyInSO, master)) {
+//
+//                RemoveAxiom removeAxiom = new RemoveAxiom(master, onlyInSOAxiom);
+//
+//                master.getOWLOntologyManager().applyChange(removeAxiom);
+//            }
+//        }
+//
+//        // Avoid a null reference.
+//        if (onlyInMSO != null) {
+//
+//            // Loop through all axioms that reference the only in MSO annotation property and remove them.
+//            for (OWLAxiom onlyInMSOAxiom : EntitySearcher.getReferencingAxioms(onlyInMSO, master)) {
+//
+//                RemoveAxiom removeAxiom = new RemoveAxiom(master, onlyInMSOAxiom);
+//
+//                master.getOWLOntologyManager().applyChange(removeAxiom);
+//            }
+//        }
 
         //endregion
 
