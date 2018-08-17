@@ -16,7 +16,7 @@ class MSOGenerator {
         OWLOntologyManager manager = master.getOWLOntologyManager();
 
         // Retrieve the IRI for the only represented in MSO boolean annotation. This IRI should be static.
-        IRI onlyInMSOIRI = IRI.create("http://purl.obolibrary.org/obo/MSO_3100075");
+//        IRI onlyInMSOIRI = IRI.create("http://purl.obolibrary.org/obo/MSO_3100075");
 
         // Retrieve the IRI for the only represented in SO boolean annotation. This IRI should be static.
         IRI onlyInSOIRI = IRI.create("http://purl.obolibrary.org/obo/MSO_3100074");
@@ -24,7 +24,7 @@ class MSOGenerator {
         // Retrieve the AnnotationProperty object for the only represented in SO, MSO, and genericallyDepends properties.
         // Create empty objects to store the references later.
         OWLAnnotationProperty onlyInSO = null;
-        OWLAnnotationProperty onlyInMSO = null;
+//        OWLAnnotationProperty onlyInMSO = null;
 
         // Loop through all the annotation properties.
         for (OWLAnnotationProperty property : master.getAnnotationPropertiesInSignature()) {
@@ -36,10 +36,10 @@ class MSOGenerator {
             }
 
             // If the IRI of the property is equal to onlyInMSOIRI, store the reference.
-            if (property.getIRI().equals(onlyInMSOIRI)) {
-
-                onlyInMSO = property;
-            }
+//            if (property.getIRI().equals(onlyInMSOIRI)) {
+//
+//                onlyInMSO = property;
+//            }
         }
 
         // Create an IRI for the refactored sequence ontology that will be saved to disk as the output.

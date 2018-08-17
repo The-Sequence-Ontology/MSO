@@ -140,7 +140,8 @@ class SOGenerator {
                 // On the other hand, if the property is onlyInSO, we should break too, as it won't have the onlyInMSO
                 // property (unless the curator seriously screwed up). We want to keep track of classes that have neither
                 // annotation. That means they are classes to which generic dependence from the SO counterpart to the
-                // MSO counterpart should be added. We will also add this class to a set of only in SO classes because we need to prevent them from losing their equivalent to axioms later on.
+                // MSO counterpart should be added. We will also add this class to a set of only in SO classes
+                // because we need to prevent them from losing their equivalent to axioms later on.
                 if (annProp.equals(onlyInSO)) {
 
                     onlyInSOClasses.add(cls);
@@ -169,33 +170,6 @@ class SOGenerator {
             }
 
         }
-
-//        // The remaining classes that are not flagged as onlyInMSOIRI are retained to continue the generation process.
-//        // Thus, we do not need the "only in" annotations anymore and should remove them.
-//
-//        // Avoid a null reference.
-//        if (onlyInSO != null) {
-//
-//            // Loop through all axioms that reference the only in SO annotation property and remove them.
-//            for (OWLAxiom onlyInSOAxiom : EntitySearcher.getReferencingAxioms(onlyInSO, master)) {
-//
-//                RemoveAxiom removeAxiom = new RemoveAxiom(master, onlyInSOAxiom);
-//
-//                manager.applyChange(removeAxiom);
-//            }
-//        }
-//
-//        // Avoid a null reference.
-//        if (onlyInMSO != null) {
-//
-//            // Loop through all axioms that reference the only in MSO annotation property and remove them.
-//            for (OWLAxiom onlyInMSOAxiom : EntitySearcher.getReferencingAxioms(onlyInMSO, master)) {
-//
-//                RemoveAxiom removeAxiom = new RemoveAxiom(master, onlyInMSOAxiom);
-//
-//                manager.applyChange(removeAxiom);
-//            }
-//        }
 
         /* Use an OWLObjectTransformer to replace every "MSO" in an IRI to "SO". We are currently working on the
            design principle that classes that are counterparts of each other in MSO and SO will have the same IRI number

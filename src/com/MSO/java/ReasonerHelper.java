@@ -1,23 +1,21 @@
 package com.MSO.java;
 
-import org.obolibrary.robot.IOHelper;
-import org.obolibrary.robot.ReasonOperation;
+import org.obolibrary.robot.*;
 import org.obolibrary.robot.exceptions.InvalidReferenceException;
 import org.obolibrary.robot.exceptions.OntologyLogicException;
+import org.semanticweb.owlapi.formats.OBODocumentFormat;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.OWLObjectTransformer;
+import org.semanticweb.owlapi.util.OWLOntologyMerger;
 import uk.ac.manchester.cs.jfact.JFactFactory;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 class ReasonerHelper {
 
@@ -29,39 +27,62 @@ class ReasonerHelper {
         // Instantiate a JFact reasoner factory to reason over MSO. Reason, then save to disk.
         OWLReasonerFactory reasonerFactory = new JFactFactory();
 
-        ReasonOperation.reason(MSO, reasonerFactory);
+        Map<String, String> options = new HashMap<>();
+
+        options.put("remove-redundant-subclass-axioms", "true");
+
+        ReasonOperation.reason(MSO, reasonerFactory, options);
+
+        RepairOperation.repair(MSO, ioHelper);
 
         // Return the reasoned MSO.
         return MSO;
 
     }
 
-    OWLOntology reasonSO(IOHelper ioHelper) throws IOException, OWLOntologyCreationException, OntologyLogicException, InvalidReferenceException {
+    void reasonSO(IOHelper ioHelper) throws IOException, OWLOntologyCreationException, OntologyLogicException, InvalidReferenceException {
 
         // Load the saved SO.
         OWLOntology SO = ioHelper.loadOntology("files/SO.owl");
 
-        // Create an import statement for the MSO.
-        File MSO_file = new File("files/MSO.owl");
+        OWLOntologyManager m = SO.getOWLOntologyManager();
 
-        OWLImportsDeclaration MSO_import = SO.getOWLOntologyManager().getOWLDataFactory().getOWLImportsDeclaration(
-                IRI.create(MSO_file));
+        OWLDataFactory df = m.getOWLDataFactory();
 
-        AddImport SO_import = new AddImport(SO, MSO_import);
+        OWLImportsDeclaration importDeclaration = df.getOWLImportsDeclaration(IRI.create
+                (new File("files/MSO.owl")));
 
-        // Add import directive to the SO.
-        SO.getOWLOntologyManager().applyChange(SO_import);
+        m.applyChange(new AddImport(SO, importDeclaration));
 
-        // Add the MSO to SO's ontology manager.
-        SO.getOWLOntologyManager().loadOntology(IRI.create(MSO_file));
+        m.loadOntology(IRI.create(new File("files/MSO.owl")));
 
-        // Instantiate a JFact reasoner factory and reason over SO with the MSO imported.
         OWLReasonerFactory reasonerFactory = new JFactFactory();
 
         ReasonOperation.reason(SO, reasonerFactory);
 
-        // Return the reasoned MSO.
-        return SO;
+        OWLOntologyMerger merger = new OWLOntologyMerger(m);
+
+        OWLOntology merged = merger.createMergedOntology(m, IRI.create
+                ("http://purl.obolibrary.org/obo/MSO-SO.owl"));
+
+        m.applyChange(new RemoveImport(merged, importDeclaration));
+
+        ioHelper.saveOntology(merged, "files/SO_reasoned.owl");
+
+        OBODocumentFormat format = new OBODocumentFormat();
+
+        File soReasonedOBO = new File("files/SO_reasoned.obo");
+
+        ioHelper.saveOntology(merged, format, soReasonedOBO, false);
+
+        m.applyChange(new RemoveImport(SO, importDeclaration));
+
+        ioHelper.saveOntology(SO, "files/SO_solo.owl");
+
+        File soSoloOBO = new File("files/SO_solo.obo");
+
+        ioHelper.saveOntology(SO, format, soSoloOBO, false);
+
     }
 
     void qualityControl(IOHelper ioHelper) throws IOException {
@@ -197,7 +218,7 @@ class ReasonerHelper {
                     String subClassLabel = getLabel(subClass, MSO_reasoned);
 
                     // Write to file.
-                    writer.write( MSOClassLabel + "\t\t\t" + subClassLabel + "\n\n");
+                    writer.write(MSOClassLabel + "\t\t\t" + subClassLabel + "\n\n");
 
                 }
             }
@@ -269,7 +290,7 @@ class ReasonerHelper {
                     String subClassLabel = getLabel(subClass, SO_reasoned);
 
                     // Write to file.
-                    writer.write( SOClassLabel + "\t\t\t" + subClassLabel + "\n\n");
+                    writer.write(SOClassLabel + "\t\t\t" + subClassLabel + "\n\n");
 
                 }
             }
@@ -313,4 +334,8 @@ class ReasonerHelper {
     }
 
 }
+
+
+
+
 

@@ -3,8 +3,10 @@ package com.MSO.java;
 import org.obolibrary.robot.IOHelper;
 import org.obolibrary.robot.exceptions.InvalidReferenceException;
 import org.obolibrary.robot.exceptions.OntologyLogicException;
+import org.semanticweb.owlapi.formats.OBODocumentFormat;
 import org.semanticweb.owlapi.model.*;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Main {
@@ -43,13 +45,20 @@ public class Main {
         // Save SO to disk.
         ioHelper.saveOntology(SO, "files/SO.owl");
 
-        // Invoke the reasoner helper to reason the SO and save to disk.
-        OWLOntology SO_reasoned = reasonerHelper.reasonSO(ioHelper);
+//         Invoke the reasoner helper to reason the SO and save to disk.
+           reasonerHelper.reasonSO(ioHelper);
 
-        ioHelper.saveOntology(SO_reasoned, "files/SO_reasoned.owl");
-
-        // Compare hierarchies of MSO and SO to make sure they are parallel.
+//         Compare hierarchies of MSO and SO to make sure they are parallel.
         reasonerHelper.qualityControl(ioHelper);
+
+        // In preparation for converting to OBO, create a DocumentFormat.
+        OBODocumentFormat oboFormat = new OBODocumentFormat();
+
+        // Create a File object for converting to OBO for the two reasoned ontologies.
+        File msoOBO = new File("files/MSO_reasoned.obo");
+
+//         Convert the MSO to OBO format and save.
+        ioHelper.saveOntology(MSO_reasoned, oboFormat, msoOBO, false);
 
     }
 }
