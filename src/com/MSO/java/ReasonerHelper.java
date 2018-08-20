@@ -42,6 +42,9 @@ class ReasonerHelper {
 
     void reasonSO(IOHelper ioHelper) throws IOException, OWLOntologyCreationException, OntologyLogicException, InvalidReferenceException {
 
+        // Retrieve the IRI for the only represented in MSO boolean annotation. This IRI should be static.
+        IRI onlyInMSOIRI = IRI.create("http://purl.obolibrary.org/obo/SO_3100075");
+
         // Load the saved SO.
         OWLOntology SO = ioHelper.loadOntology("files/SO.owl");
 
@@ -49,12 +52,14 @@ class ReasonerHelper {
 
         OWLDataFactory df = m.getOWLDataFactory();
 
+        OWLAnnotationProperty onlyInMSO = df.getOWLAnnotationProperty(onlyInMSOIRI);
+
         OWLImportsDeclaration importDeclaration = df.getOWLImportsDeclaration(IRI.create
                 (new File("files/MSO.owl")));
 
         m.applyChange(new AddImport(SO, importDeclaration));
 
-        m.loadOntology(IRI.create(new File("files/MSO.owl")));
+        m.loadOntologyFromOntologyDocument(new File("files/MSO.owl"));
 
         OWLReasonerFactory reasonerFactory = new JFactFactory();
 
@@ -76,6 +81,46 @@ class ReasonerHelper {
         ioHelper.saveOntology(merged, format, soReasonedOBO, false);
 
         m.applyChange(new RemoveImport(SO, importDeclaration));
+
+        m.removeOntology(Objects.requireNonNull(m.getOntology
+                (IRI.create("http://purl.obolibrary.org/obo/MSO.owl"))));
+
+        Set<OWLClass> soClasses = SO.getClassesInSignature();
+
+        for (OWLClass cls : soClasses) {
+
+            IRI iri = cls.getIRI();
+
+            if (iri.toString().contains("MSO_")) {
+
+                System.out.println(iri.toString());
+
+                for (OWLAxiom MSOAxiom : EntitySearcher.getReferencingAxioms(cls, SO)) {
+
+                    RemoveAxiom removeAxiom = new RemoveAxiom(SO, MSOAxiom);
+
+                    m.applyChange(removeAxiom);
+                }
+
+            }
+
+            for (OWLAnnotation annotation : EntitySearcher.getAnnotations(cls, SO)) {
+
+                if (annotation.getProperty().equals(onlyInMSO)) {
+
+                    System.out.println(cls);
+
+                    for (OWLAxiom MSOAxiom : EntitySearcher.getReferencingAxioms(cls, SO)) {
+
+                        RemoveAxiom removeAxiom = new RemoveAxiom(SO, MSOAxiom);
+
+                        m.applyChange(removeAxiom);
+                    }
+                }
+            }
+
+
+        }
 
         ioHelper.saveOntology(SO, "files/SO_solo.owl");
 
