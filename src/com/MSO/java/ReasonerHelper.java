@@ -93,8 +93,6 @@ class ReasonerHelper {
 
             if (iri.toString().contains("MSO_")) {
 
-                System.out.println(iri.toString());
-
                 for (OWLAxiom MSOAxiom : EntitySearcher.getReferencingAxioms(cls, SO)) {
 
                     RemoveAxiom removeAxiom = new RemoveAxiom(SO, MSOAxiom);
@@ -107,8 +105,6 @@ class ReasonerHelper {
             for (OWLAnnotation annotation : EntitySearcher.getAnnotations(cls, SO)) {
 
                 if (annotation.getProperty().equals(onlyInMSO)) {
-
-                    System.out.println(cls);
 
                     for (OWLAxiom MSOAxiom : EntitySearcher.getReferencingAxioms(cls, SO)) {
 
