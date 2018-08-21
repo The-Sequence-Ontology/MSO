@@ -8,6 +8,11 @@ In the meantime, the community is invited to explore and comment on the master f
 
 Comments on the code are also welcome. It is not completely cleaned up yet (for example, some duplicated code that should be resolved into separate functions). But more importantly, as we are new to the OWL API, and there are multiple ways to do things, any suggestions from those who are more proficient as to best practices or the most convenient methods to use would be greatly appreciated.
 
+### MSO short paper
+
+We presented a paper on the design and programmatic algorithm for generating the MSO and SO from the master
+file.  It can be found in the repository root directory, here[https://github.com/The-Sequence-Ontology/MSO/MSO short paper - ISMB 2018.pdf].
+
 ### Stable release versions
 
 The latest version of the Sequence Ontology is still to be found at:
