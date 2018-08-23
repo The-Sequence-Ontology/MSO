@@ -10,8 +10,9 @@ Comments on the code are also welcome. It is not completely cleaned up yet (for 
 
 ### MSO short paper
 
-We presented a paper on the design and programmatic algorithm for generating the MSO and SO from the master
-file.  It can be found in the repository root directory, [here](https://github.com/The-Sequence-Ontology/MSO/blob/master/MSO_short_paper-ISMB_2018.pdf).
+We presented a paper at the ISMB 2018 conference (Bio-ontologies community of interest) on the design
+and programmatic algorithm for generating the MSO and SO from the master file.  It can be found in the
+repository root directory, [here](https://github.com/The-Sequence-Ontology/MSO/blob/master/MSO_short_paper-ISMB_2018.pdf).
 
 ### Stable release versions
 
