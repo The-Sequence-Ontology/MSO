@@ -27,12 +27,12 @@ public class Main {
         OWLOntology MSO = msoGenerator.generateMSO(master);
 
         // Save MSO to disk.
-        ioHelper.saveOntology(MSO, "files/MSO_unreasoned.owl");
+        ioHelper.saveOntology(MSO, "MSO_unreasoned.owl");
 
         // Invoke the reasoner helper to reason the MSO and save to disk.
         OWLOntology MSO_reasoned = reasonerHelper.reasonMSO(ioHelper);
 
-        ioHelper.saveOntology(MSO_reasoned,"files/MSO.owl");
+        ioHelper.saveOntology(MSO_reasoned,"MSO.owl");
 
         // Reload the master ontology as it has been changed above due to passing by reference.
         OWLOntology master2 = ioHelper.loadOntology("master.owl");
@@ -43,7 +43,7 @@ public class Main {
         OWLOntology SO = soGenerator.generateSO(master2);
 
         // Save SO to disk.
-        ioHelper.saveOntology(SO, "files/SO_unreasoned.owl");
+        ioHelper.saveOntology(SO, "SO_unreasoned.owl");
 
 //         Invoke the reasoner helper to reason the SO and save to disk.
            reasonerHelper.reasonSO(ioHelper);
@@ -55,7 +55,7 @@ public class Main {
         OBODocumentFormat oboFormat = new OBODocumentFormat();
 
         // Create a File object for converting to OBO for the two reasoned ontologies.
-        File msoOBO = new File("files/MSO.obo");
+        File msoOBO = new File("MSO.obo");
 
 //         Convert the MSO to OBO format and save.
         ioHelper.saveOntology(MSO_reasoned, oboFormat, msoOBO, false);

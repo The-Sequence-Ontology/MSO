@@ -22,7 +22,7 @@ class ReasonerHelper {
     OWLOntology reasonMSO(IOHelper ioHelper) throws IOException, OWLOntologyCreationException, OntologyLogicException, InvalidReferenceException {
 
         // Load the saved MSO.
-        OWLOntology MSO = ioHelper.loadOntology("files/MSO_unreasoned.owl");
+        OWLOntology MSO = ioHelper.loadOntology("MSO_unreasoned.owl");
 
         // Instantiate a JFact reasoner factory to reason over MSO. Reason, then save to disk.
         OWLReasonerFactory reasonerFactory = new JFactFactory();
@@ -46,7 +46,7 @@ class ReasonerHelper {
         IRI onlyInMSOIRI = IRI.create("http://purl.obolibrary.org/obo/SO_3100075");
 
         // Load the saved SO.
-        OWLOntology SO = ioHelper.loadOntology("files/SO_unreasoned.owl");
+        OWLOntology SO = ioHelper.loadOntology("SO_unreasoned.owl");
 
         OWLOntologyManager m = SO.getOWLOntologyManager();
 
@@ -55,11 +55,11 @@ class ReasonerHelper {
         OWLAnnotationProperty onlyInMSO = df.getOWLAnnotationProperty(onlyInMSOIRI);
 
         OWLImportsDeclaration importDeclaration = df.getOWLImportsDeclaration(IRI.create
-                (new File("files/MSO_unreasoned.owl")));
+                (new File("MSO_unreasoned.owl")));
 
         m.applyChange(new AddImport(SO, importDeclaration));
 
-        m.loadOntologyFromOntologyDocument(new File("files/MSO_unreasoned.owl"));
+        m.loadOntologyFromOntologyDocument(new File("MSO_unreasoned.owl"));
 
         OWLReasonerFactory reasonerFactory = new JFactFactory();
 
@@ -72,11 +72,11 @@ class ReasonerHelper {
 
         m.applyChange(new RemoveImport(merged, importDeclaration));
 
-        ioHelper.saveOntology(merged, "files/MSO-SO_merged.owl");
+        ioHelper.saveOntology(merged, "MSO-SO_merged.owl");
 
         OBODocumentFormat format = new OBODocumentFormat();
 
-        File soReasonedOBO = new File("files/MSO-SO_merged.obo");
+        File soReasonedOBO = new File("MSO-SO_merged.obo");
 
         ioHelper.saveOntology(merged, format, soReasonedOBO, false);
 
@@ -118,9 +118,9 @@ class ReasonerHelper {
 
         }
 
-        ioHelper.saveOntology(SO, "files/SO.owl");
+        ioHelper.saveOntology(SO, "SO.owl");
 
-        File soSoloOBO = new File("files/SO.obo");
+        File soSoloOBO = new File("SO.obo");
 
         ioHelper.saveOntology(SO, format, soSoloOBO, false);
 
@@ -135,10 +135,10 @@ class ReasonerHelper {
         IRI biologicalSequenceEntityIRI = IRI.create("http://purl.obolibrary.org/obo/SO_3000265");
 
         // Load the saved MSO.
-        OWLOntology MSO_reasoned = ioHelper.loadOntology("files/MSO.owl");
+        OWLOntology MSO_reasoned = ioHelper.loadOntology("MSO.owl");
 
         // Load the reasoned SO.
-        OWLOntology SO_reasoned = ioHelper.loadOntology("files/SO.owl");
+        OWLOntology SO_reasoned = ioHelper.loadOntology("SO.owl");
 
         // Change the IRIs in the MSO to be identical to those in SO.
         OWLOntologyManager MSOManager = MSO_reasoned.getOWLOntologyManager();
