@@ -6,7 +6,7 @@ This is the primary repository for the Molecular Sequence Ontology (MSO), an ont
 
 The taxonomy of the SO has been significantly refactored and designed to be as parallel as possible to that of the MSO.
 
-Both ontologies are available in OWL and OBO format (MSO.owl, MSO.obo, SO.owl, SO.obo). The OBO files can be opened in OBO-Edit (if one really must do so), but make sure that "Allow dangling references" is checked in the Advanced settings when loading and ignore non-critical warnings. Also, cross-products will not display properly.
+Both ontologies are available in OWL and OBO format (MSO.owl, MSO.obo, SO_refactored.owl, SO_refactored.obo). The OBO files can be opened in OBO-Edit (if one really must do so), but make sure that "Allow dangling references" is checked in the Advanced settings when loading and ignore non-critical warnings. Also, cross-products will not display properly.
 
 The ontology is also available as a merge of MSO and SO. Here, the relation of "generically depends on" for each applicable SO entity on its corresponding MSO bearer is explicitly asserted.
 

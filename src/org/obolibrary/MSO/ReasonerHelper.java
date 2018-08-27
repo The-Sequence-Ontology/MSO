@@ -190,9 +190,9 @@ class ReasonerHelper {
 
         }
 
-        ioHelper.saveOntology(SO, "SO.owl");
+        ioHelper.saveOntology(SO, "SO_refactored.owl");
 
-        File soSoloOBO = new File("SO.obo");
+        File soSoloOBO = new File("SO_refactored.obo");
 
         ioHelper.saveOntology(SO, format, soSoloOBO, false);
 
