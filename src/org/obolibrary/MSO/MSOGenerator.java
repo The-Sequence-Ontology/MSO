@@ -1,4 +1,4 @@
-package com.MSO.java;
+package org.obolibrary.MSO;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.search.EntitySearcher;

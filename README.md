@@ -12,7 +12,7 @@ The ontology is also available as a merge of MSO and SO. Here, the relation of "
 
 The ontologies are fully reasoned with all axioms asserted. However, we also provide both ontologies unreasoned (MSO_unreasoned.owl and SO_unreasoned.owl) in case users wish to import them into their own ontologies for reasoning.
 
-We consider the ontologies to be in the beta-testing phase. We are in the process of integrating terms from the SO currently in use that were added since it branched from our working copy, as well as a number of other tasks. But the main structure of both ontologies is in place.
+We consider the ontologies to be in the beta-testing phase. We are in the process of integrating terms from the SO currently in use that were added since it branched from our working copy, and the annotations still need much work. But the taxonomy and important relations in both ontologies are in place.
 
 ### Guidelines for users
 

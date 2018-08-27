@@ -1,4 +1,4 @@
-package com.MSO.java;
+package org.obolibrary.MSO;
 
 import org.obolibrary.robot.IOHelper;
 import org.obolibrary.robot.exceptions.InvalidReferenceException;
