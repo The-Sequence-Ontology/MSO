@@ -74,6 +74,78 @@ class ReasonerHelper {
 
         ioHelper.saveOntology(merged, "MSO-SO_merged.owl");
 
+        /* Now we have to add the genus for all SO classes to the 'generically depends on' equivalent
+        class axioms as a conjunction so that it gets translated to the OBO file properly. We will need to use the
+        the immediate superclasses as the genera. */
+
+        // The merged ontology may have different managers and data factories so retrieve them.
+        OWLOntologyManager mergedManager = merged.getOWLOntologyManager();
+
+        OWLDataFactory mergedDataFactory = mergedManager.getOWLDataFactory();
+
+        // Retrieve the object property for 'generically depends on'.
+        OWLObjectProperty GDO = mergedDataFactory.getOWLObjectProperty
+                (IRI.create("http://purl.obolibrary.org/obo/SO_6000000"));
+
+        // Get all the merged classes.
+        Set<OWLClass> mergedClasses = merged.getClassesInSignature();
+
+        // Run a loop and check if they have equivalent classes of type object some properties from.
+        for (OWLClass cls : mergedClasses) {
+
+            // Get all equivalent classes on this class.
+            Collection<OWLClassExpression> equivs = EntitySearcher.getEquivalentClasses(cls, merged);
+
+            // Loop through the collection and see if any are of type object some properties from.
+            for (OWLClassExpression expression : equivs) {
+
+                if (expression.getClassExpressionType() == ClassExpressionType.OBJECT_SOME_VALUES_FROM){
+
+                    // Cast the expression as an object some values from expression.
+                    OWLObjectSomeValuesFrom objectExpression = (OWLObjectSomeValuesFrom) expression;
+
+                    // Is the object property generically depends on? (it should be in all cases really)
+                    if (objectExpression.getProperty().equals(GDO)) {
+
+                        // Create new expressions which are conjunctions of the genera and the object some
+                        // values from expression.
+
+                        // Get the superclasses.
+                        Collection<OWLClassExpression> superclasses = EntitySearcher.getSuperClasses(cls, merged);
+
+                        // Add the generically depends on expression itself to the collection.
+                        superclasses.add(objectExpression);
+
+                        // Now get the conjuncts as a set.
+                        Set<OWLClassExpression> conjuncts = new HashSet<>(superclasses);
+
+                        // Get the intersectionOf expression for all the conjuncts.
+                        OWLObjectIntersectionOf intersectionOf = mergedDataFactory.
+                                getOWLObjectIntersectionOf(conjuncts);
+
+                        // Get the axiom asserting equivalence between the class and this intersection expression.
+                        OWLEquivalentClassesAxiom axiom = mergedDataFactory.getOWLEquivalentClassesAxiom
+                                (cls, intersectionOf);
+
+                        // Add the axiom to the ontology.
+                        mergedManager.applyChange(new AddAxiom(merged, axiom));
+
+                        // Get the remove axiom for the original equivalent class.
+                        RemoveAxiom removeAxiom = new RemoveAxiom
+                                (merged, mergedDataFactory.getOWLEquivalentClassesAxiom(cls, objectExpression));
+
+                        // Remove it.
+                        mergedManager.applyChange(removeAxiom);
+
+                    }
+                }
+
+
+            }
+        }
+
+
+
         OBODocumentFormat format = new OBODocumentFormat();
 
         File soReasonedOBO = new File("MSO-SO_merged.obo");
