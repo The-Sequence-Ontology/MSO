@@ -201,7 +201,7 @@ class ReasonerHelper {
     void qualityControl(IOHelper ioHelper) throws IOException {
 
         // Create a file and file writer for the output.
-        FileWriter writer = new FileWriter("files/quality_control.txt");
+        FileWriter writer = new FileWriter("quality_control.txt");
 
         // Retrieve the IRI for biological sequence entity in the SO.
         IRI biologicalSequenceEntityIRI = IRI.create("http://purl.obolibrary.org/obo/SO_3000265");
@@ -210,7 +210,7 @@ class ReasonerHelper {
         OWLOntology MSO_reasoned = ioHelper.loadOntology("MSO.owl");
 
         // Load the reasoned SO.
-        OWLOntology SO_reasoned = ioHelper.loadOntology("SO.owl");
+        OWLOntology SO_reasoned = ioHelper.loadOntology("SO_refactored.owl");
 
         // Change the IRIs in the MSO to be identical to those in SO.
         OWLOntologyManager MSOManager = MSO_reasoned.getOWLOntologyManager();
