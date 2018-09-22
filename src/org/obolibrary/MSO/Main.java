@@ -32,7 +32,7 @@ public class Main {
         // Invoke the reasoner helper to reason the MSO and save to disk.
         OWLOntology MSO_reasoned = reasonerHelper.reasonMSO(ioHelper);
 
-        ioHelper.saveOntology(MSO_reasoned,"MSO.owl");
+        ioHelper.saveOntology(MSO_reasoned, "MSO.owl");
 
         // Reload the master ontology as it has been changed above due to passing by reference.
         OWLOntology master2 = ioHelper.loadOntology("master.owl");
@@ -46,7 +46,7 @@ public class Main {
         ioHelper.saveOntology(SO, "SO_unreasoned.owl");
 
 //         Invoke the reasoner helper to reason the SO and save to disk.
-           reasonerHelper.reasonSO(ioHelper);
+        reasonerHelper.reasonSO(ioHelper);
 
 //         Compare hierarchies of MSO and SO to make sure they are parallel.
         reasonerHelper.qualityControl(ioHelper);

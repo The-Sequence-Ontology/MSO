@@ -1,11 +1,11 @@
 package org.obolibrary.MSO;
 
+import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.OWLObjectTransformer;
 import org.semanticweb.owlapi.util.OWLOntologyIRIChanger;
-import uk.ac.manchester.cs.jfact.JFactFactory;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
 
 import java.util.*;
@@ -208,7 +208,7 @@ class SOGenerator {
         /* We have to now retrieve the set of all specifically dependent continuants to ensure that they do not get a generic dependence axiom added to them nor have their equivalent to axioms removed. We will use a reasoner to obtain all subclasses of "specifically dependent continuant" and add them to our set. */
         OWLReasonerConfiguration config = new SimpleConfiguration();
 
-        OWLReasonerFactory reasonerFactory = new JFactFactory();
+        OWLReasonerFactory reasonerFactory = new ReasonerFactory();
 
         OWLReasoner reasoner = reasonerFactory.createReasoner(master, config);
 

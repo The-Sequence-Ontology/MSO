@@ -3,6 +3,7 @@ package org.obolibrary.MSO;
 import org.obolibrary.robot.*;
 import org.obolibrary.robot.exceptions.InvalidReferenceException;
 import org.obolibrary.robot.exceptions.OntologyLogicException;
+import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.formats.OBODocumentFormat;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
@@ -10,7 +11,6 @@ import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.OWLObjectTransformer;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
-import uk.ac.manchester.cs.jfact.JFactFactory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -25,7 +25,7 @@ class ReasonerHelper {
         OWLOntology MSO = ioHelper.loadOntology("MSO_unreasoned.owl");
 
         // Instantiate a JFact reasoner factory to reason over MSO. Reason, then save to disk.
-        OWLReasonerFactory reasonerFactory = new JFactFactory();
+        OWLReasonerFactory reasonerFactory = new ReasonerFactory();
 
         Map<String, String> options = new HashMap<>();
 
@@ -61,7 +61,7 @@ class ReasonerHelper {
 
         m.loadOntologyFromOntologyDocument(new File("MSO_unreasoned.owl"));
 
-        OWLReasonerFactory reasonerFactory = new JFactFactory();
+        OWLReasonerFactory reasonerFactory = new ReasonerFactory();
 
         ReasonOperation.reason(SO, reasonerFactory);
 
