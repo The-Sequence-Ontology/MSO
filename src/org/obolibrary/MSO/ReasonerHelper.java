@@ -21,18 +21,22 @@ class ReasonerHelper {
 
     OWLOntology reasonMSO(IOHelper ioHelper) throws IOException, OWLOntologyCreationException, OntologyLogicException, InvalidReferenceException {
 
-        // Load the saved MSO.
+        // Load the unreasoned ontology for MSO
         OWLOntology MSO = ioHelper.loadOntology("MSO_unreasoned.owl");
 
-        // Instantiate a JFact reasoner factory to reason over MSO. Reason, then save to disk.
+        // Create a HermiT reasoner factor for the ROBOT reason operation.
         OWLReasonerFactory reasonerFactory = new ReasonerFactory();
 
-        Map<String, String> options = new HashMap<>();
+        // Run the ROBOT reason operation to reason the ontology.
+        ReasonOperation.reason(MSO, reasonerFactory);
 
-        options.put("remove-redundant-subclass-axioms", "true");
+        // Create a reasoner with the reasoned MSO as the root ontology for the next operation.
+        OWLReasoner reasoner = reasonerFactory.createReasoner(MSO);
 
-        ReasonOperation.reason(MSO, reasonerFactory, options);
+        // Use ROBOT's remove redundant subclass axioms operation.
+        ReasonOperation.removeRedundantSubClassAxioms(reasoner);
 
+        // Use the repair operation to remove references to obsolete classes (doesn't seem to really work).
         RepairOperation.repair(MSO, ioHelper);
 
         // Return the reasoned MSO.
