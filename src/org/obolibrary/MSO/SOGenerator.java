@@ -1,6 +1,7 @@
 package org.obolibrary.MSO;
 
 import org.semanticweb.HermiT.ReasonerFactory;
+import org.semanticweb.owlapi.change.ConvertEquivalentClassesToSuperClasses;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.search.EntitySearcher;
@@ -228,6 +229,8 @@ class SOGenerator {
         // classify the SO, it's important to remove all other equivalentTo axioms that are carried over from the
         // master file to avoid logical conflicts.
 
+        // If there are equivalentTo axioms, we will change them to SubClassOf axioms instead.
+
         // Update the set of classes in the signature of the working ontology since it has changed since it was first
         // loaded.
         for (OWLClass clsSO : master.getClassesInSignature()) {
@@ -254,17 +257,25 @@ class SOGenerator {
 
             }
 
-            // retrieve all EquivalentClasses axioms on the class.
-            Set<OWLEquivalentClassesAxiom> equivalentClassesAxioms = master.getEquivalentClassesAxioms(clsSO);
+            // Use the ConvertEquivalentClassesToSuperClasses object to change all Equivalent Class axioms to SubClassOf
+            // axioms for this class.
+            ConvertEquivalentClassesToSuperClasses converter = new ConvertEquivalentClassesToSuperClasses(manager
+            .getOWLDataFactory(), clsSO, manager.getOntologies(), master, false);
 
-            // Remove all the axioms in the set.
-            for (OWLEquivalentClassesAxiom equivalentClassesAxiom : equivalentClassesAxioms) {
+            // Apply the generated changes from this converter.
+            manager.applyChanges(converter.getChanges());
 
-                RemoveAxiom removeAxiom = new RemoveAxiom(master, equivalentClassesAxiom);
-
-                manager.applyChange(removeAxiom);
-
-            }
+//            // retrieve all EquivalentClasses axioms on the class.
+//            Set<OWLEquivalentClassesAxiom> equivalentClassesAxioms = master.getEquivalentClassesAxioms(clsSO);
+//
+//            // Remove all the axioms in the set.
+//            for (OWLEquivalentClassesAxiom equivalentClassesAxiom : equivalentClassesAxioms) {
+//
+//                RemoveAxiom removeAxiom = new RemoveAxiom(master, equivalentClassesAxiom);
+//
+//                manager.applyChange(removeAxiom);
+//
+//            }
         }
 
         /* Now we add generically_depends_on equivalent class axioms to each class in our working ontology.
