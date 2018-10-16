@@ -76,6 +76,11 @@ class ReasonerHelper {
 
         m.applyChange(new RemoveImport(merged, importDeclaration));
 
+        // Use ROBOT's remove redundant subclass axioms operation.
+        OWLReasoner reasoner = reasonerFactory.createReasoner(merged);
+
+        ReasonOperation.removeRedundantSubClassAxioms(reasoner);
+
         ioHelper.saveOntology(merged, "MSO-SO_merged.owl");
 
         /* Now we have to add the genus for all SO classes to the 'generically depends on' equivalent
