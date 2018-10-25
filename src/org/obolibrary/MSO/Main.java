@@ -45,10 +45,10 @@ public class Main {
         // Save SO to disk.
         ioHelper.saveOntology(SO, "SO_unreasoned.owl");
 
-//         Invoke the reasoner helper to reason the SO and save to disk.
+//      Invoke the reasoner helper to reason the SO and save to disk.
         reasonerHelper.reasonSO(ioHelper);
 
-//         Compare hierarchies of MSO and SO to make sure they are parallel.
+//      Compare hierarchies of MSO and SO to make sure they are parallel.
         reasonerHelper.qualityControl(ioHelper);
 
         // In preparation for converting to OBO, create a DocumentFormat.

@@ -24,6 +24,9 @@ class SOGenerator {
         // Create a data factory for many information retrieval and editing tasks in the OWL API.
         OWLDataFactory dataFactory = manager.getOWLDataFactory();
 
+        // These IRIs have been already decided and should not change at all. The following IRIs all fall into that
+        // category.  For example, onlyInMSOIRI will always have the IRI = MSO_3100075.
+
         // Retrieve the IRI for the only represented in MSO boolean annotation. This IRI should be static.
         IRI onlyInMSOIRI = IRI.create("http://purl.obolibrary.org/obo/MSO_3100075");
 
@@ -31,6 +34,7 @@ class SOGenerator {
         IRI onlyInSOIRI = IRI.create("http://purl.obolibrary.org/obo/MSO_3100074");
 
         // Retrieve the IRI for the generically depends on object property. This IRI should be static.
+        // This property needs to now be imported from the Relations Ontology so this value will change.
         IRI genericallyDependsIRI = IRI.create("http://purl.obolibrary.org/obo/SO_6000000");
 
         // Retrieve the IRI for generically dependent continuant. This IRI should be static.
@@ -53,6 +57,7 @@ class SOGenerator {
 
         // Retrieve the AnnotationProperty object for the only represented in SO, MSO, and genericallyDepends properties.
         // Create empty objects to store the references later.
+        // In a future iteration, change this process of retrieving annotation properties to use the PrefixManager.
         OWLAnnotationProperty onlyInSO = null;
         OWLAnnotationProperty onlyInMSO = null;
         OWLObjectProperty genericallyDepends = null;
@@ -238,6 +243,7 @@ class SOGenerator {
             // If the class is a specifically dependent continuant, skip this step.
             if (specificallyDependentContinuants.contains(clsSO)) continue;
 
+            // Global changes to the IRIs (MSO_ to SO_) hadn't yet been done when the onlyInSOClasses set was generated.
             // If the class is only in SO, skip it also.
             IRI clsMSOIRI = IRI.create(clsSO.getIRI().toString().replace("SO_", "MSO_"));
 
@@ -265,17 +271,6 @@ class SOGenerator {
             // Apply the generated changes from this converter.
             manager.applyChanges(converter.getChanges());
 
-//            // retrieve all EquivalentClasses axioms on the class.
-//            Set<OWLEquivalentClassesAxiom> equivalentClassesAxioms = master.getEquivalentClassesAxioms(clsSO);
-//
-//            // Remove all the axioms in the set.
-//            for (OWLEquivalentClassesAxiom equivalentClassesAxiom : equivalentClassesAxioms) {
-//
-//                RemoveAxiom removeAxiom = new RemoveAxiom(master, equivalentClassesAxiom);
-//
-//                manager.applyChange(removeAxiom);
-//
-//            }
         }
 
         /* Now we add generically_depends_on equivalent class axioms to each class in our working ontology.
