@@ -300,6 +300,9 @@ class ReasonerHelper {
 
                 for (OWLClass subClass : MSOdirectBioSeqEntitySubClasses1) {
 
+                    // If class exists only in MSO, do not write it out.
+                    if (checkOnlyInMSO(subClass, MSO_reasoned)) continue;
+
                     // Get the label.
                     String subClassLabel = getLabel(subClass, MSO_reasoned);
 
@@ -335,6 +338,9 @@ class ReasonerHelper {
                 String MSOClassLabel = getLabel(MSOClass, MSO_reasoned);
 
                 for (OWLClass subClass : MSOdirectSubClasses) {
+
+                    // If class exists only in MSO, do not write it out.
+                    if (checkOnlyInMSO(subClass, MSO_reasoned)) continue;
 
                     // Get the label.
                     String subClassLabel = getLabel(subClass, MSO_reasoned);
@@ -478,6 +484,35 @@ class ReasonerHelper {
 
             // Determine if it is the onlyInSO property.
             if (annProp.equals(onlyInSO)) {
+
+                return true;
+            }
+
+        }
+
+        return false;
+
+    }
+
+    boolean checkOnlyInMSO(OWLClass cls, OWLOntology ont) {
+
+        // Retrieve the IRI for the only represented in SO boolean annotation. This IRI should be static.
+        IRI onlyInMSOIRI = IRI.create("http://purl.obolibrary.org/obo/MSO_3100075");
+
+        // Retrieve it as an annotation property.
+        OWLAnnotationProperty onlyInMSO = ont.getOWLOntologyManager().getOWLDataFactory().getOWLAnnotationProperty
+                (onlyInMSOIRI);
+
+        // Retrieve all the annotations on the current class. Examine them one by one.
+        for (OWLAnnotation ann : EntitySearcher.getAnnotations(cls, ont)) {
+
+            // Determine what type of annotation property is associated with the current annotation.
+            OWLAnnotationProperty annProp = ann.getProperty();
+
+            // Determine if it is the onlyInSO property.
+            if (annProp.equals(onlyInMSO)) {
+
+                System.out.println(cls.toString());
 
                 return true;
             }
