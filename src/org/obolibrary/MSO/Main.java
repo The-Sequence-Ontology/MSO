@@ -57,7 +57,7 @@ public class Main {
         // Create a File object for converting to OBO for the two reasoned ontologies.
         File msoOBO = new File("MSO.obo");
 
-//         Convert the MSO to OBO format and save.
+//      Convert the MSO to OBO format and save.
         ioHelper.saveOntology(MSO_reasoned, oboFormat, msoOBO, false);
 
     }

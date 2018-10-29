@@ -372,6 +372,9 @@ class ReasonerHelper {
 
                 for (OWLClass subClass : SOdirectBioSeqEntitySubClasses2) {
 
+                    // If the class is only in SO, do not write it out.
+                    if (checkOnlyInSO(subClass, SO_reasoned)) continue;
+
                     // Get the label.
                     String subClassLabel = getLabel(subClass, SO_reasoned);
 
@@ -407,6 +410,9 @@ class ReasonerHelper {
                 String SOClassLabel = getLabel(SOClass, SO_reasoned);
 
                 for (OWLClass subClass : SOdirectSubClasses) {
+
+                    // If the class is only in SO, do not write it out.
+                    if (checkOnlyInSO(subClass, SO_reasoned)) continue;
 
                     // Get the label.
                     String subClassLabel = getLabel(subClass, SO_reasoned);
@@ -452,6 +458,33 @@ class ReasonerHelper {
         }
 
         return label;
+
+    }
+
+    boolean checkOnlyInSO(OWLClass cls, OWLOntology ont) {
+
+        // Retrieve the IRI for the only represented in SO boolean annotation. This IRI should be static.
+        IRI onlyInSOIRI = IRI.create("http://purl.obolibrary.org/obo/SO_3100074");
+
+        // Retrieve it as an annotation property.
+        OWLAnnotationProperty onlyInSO = ont.getOWLOntologyManager().getOWLDataFactory().getOWLAnnotationProperty
+                (onlyInSOIRI);
+
+        // Retrieve all the annotations on the current class. Examine them one by one.
+        for (OWLAnnotation ann : EntitySearcher.getAnnotations(cls, ont)) {
+
+            // Determine what type of annotation property is associated with the current annotation.
+            OWLAnnotationProperty annProp = ann.getProperty();
+
+            // Determine if it is the onlyInSO property.
+            if (annProp.equals(onlyInSO)) {
+
+                return true;
+            }
+
+        }
+
+        return false;
 
     }
 
