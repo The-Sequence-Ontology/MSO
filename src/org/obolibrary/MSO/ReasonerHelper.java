@@ -467,7 +467,7 @@ class ReasonerHelper {
 
     }
 
-    boolean checkOnlyInSO(OWLClass cls, OWLOntology ont) {
+    private boolean checkOnlyInSO(OWLClass cls, OWLOntology ont) {
 
         // Retrieve the IRI for the only represented in SO boolean annotation. This IRI should be static.
         IRI onlyInSOIRI = IRI.create("http://purl.obolibrary.org/obo/SO_3100074");
@@ -494,7 +494,7 @@ class ReasonerHelper {
 
     }
 
-    boolean checkOnlyInMSO(OWLClass cls, OWLOntology ont) {
+    private boolean checkOnlyInMSO(OWLClass cls, OWLOntology ont) {
 
         // Retrieve the IRI for the only represented in SO boolean annotation. This IRI should be static.
         IRI onlyInMSOIRI = IRI.create("http://purl.obolibrary.org/obo/MSO_3100075");

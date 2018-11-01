@@ -7,6 +7,7 @@ import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.OWLObjectTransformer;
 import org.semanticweb.owlapi.util.OWLOntologyIRIChanger;
+import uk.ac.manchester.cs.owl.owlapi.OWLLiteralImplString;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
 
 import java.util.*;
@@ -32,6 +33,10 @@ class SOGenerator {
 
         // Retrieve the IRI for the only represented in SO boolean annotation. This IRI should be static.
         IRI onlyInSOIRI = IRI.create("http://purl.obolibrary.org/obo/MSO_3100074");
+
+        // Get the id annotation property. The IRI used should be static.
+        OWLAnnotationProperty idAnnotationProperty = dataFactory.getOWLAnnotationProperty(IRI.create
+                ("http://www.geneontology.org/formats/oboInOwl#id"));
 
         // Retrieve the IRI for the generically depends on object property. This IRI should be static.
         // This property needs to now be imported from the Relations Ontology so this value will change.
@@ -122,6 +127,14 @@ class SOGenerator {
 
                 // Determine what type of annotation property is associated with the current annotation.
                 OWLAnnotationProperty annProp = ann.getProperty();
+
+                // If it is the id annotation, take the opportunity to change it if the class is a native MSO class
+                // (e.g. its IRI starts with the 'MSO_' prefix.
+                if (annProp.equals(idAnnotationProperty)) {
+
+                    // Call the function to change the ID.
+                    changeIDAnnotation(master, cls, ann);
+                }
 
                 // Determine if it is the onlyInMSO property.
                 if (annProp.equals(onlyInMSO)) {
@@ -266,7 +279,7 @@ class SOGenerator {
             // Use the ConvertEquivalentClassesToSuperClasses object to change all Equivalent Class axioms to SubClassOf
             // axioms for this class.
             ConvertEquivalentClassesToSuperClasses converter = new ConvertEquivalentClassesToSuperClasses(manager
-            .getOWLDataFactory(), clsSO, manager.getOntologies(), master, false);
+                    .getOWLDataFactory(), clsSO, manager.getOntologies(), master, false);
 
             // Apply the generated changes from this converter.
             manager.applyChanges(converter.getChanges());
@@ -309,11 +322,10 @@ class SOGenerator {
         //endregion
 
 
-        //region This section prepares the ontology for output and saves it to a file.
+        //region This section prepares the ontology for output.
 
         /* Now that all of our changes to the master ontology has given us the final form of SO, we must save this
-        ontology not as the master, but as SO. To do this we change the ontology's IRI and label and save it as a
-        separate file. */
+        ontology not as the master, but as SO. To do this we change the ontology's IRI and label before returning it. */
 
         // Retrieve the working ontology's manager to change its IRI.
         OWLOntologyIRIChanger IRIchanger = new OWLOntologyIRIChanger(manager);
@@ -331,5 +343,53 @@ class SOGenerator {
 
     }
 
+    // This is a method to replace the ID annotation that contains a value of 'MSO:XXXXXXX' to one of 'SO:XXXXXXX'.
+    private void changeIDAnnotation(OWLOntology ont, OWLClass cls, OWLAnnotation ann) {
+
+        // If this is not a native MSO class (e.g. it is imported from another ontology), simply return without changes.
+        if (!cls.getIRI().toString().contains("MSO_")) return;
+
+        // Get the ontology manager.
+        OWLOntologyManager manager = ont.getOWLOntologyManager();
+
+        // Get the manager datafactory.
+        OWLDataFactory factory = manager.getOWLDataFactory();
+
+        // Get the id annotation property. The IRI used should be static.
+        OWLAnnotationProperty idAnnotationProperty = factory.getOWLAnnotationProperty(IRI.create
+                ("http://www.geneontology.org/formats/oboInOwl#id"));
+
+        // Get the IRI of the class as a string.
+        String iri = cls.getIRI().toString();
+
+        // First remove the existing id annotation.  Get the assertion axiom.
+        OWLAnnotationAssertionAxiom annAxiom = factory.getOWLAnnotationAssertionAxiom(cls.getIRI(), ann);
+
+        // Create a remove axiom change and apply it.
+        RemoveAxiom removeAxiom = new RemoveAxiom(ont, annAxiom);
+
+        manager.applyChange(removeAxiom);
+
+        // Split the iri (as a string) along the MSO_ part, so that the part to the right will be the numeric ID only.
+        String[] split = iri.split("MSO_");
+
+        // Retrieve the numeric portion only.
+        String numericID = split[1];
+
+        // Create a new string with the SO: prefix.
+        String newID = "SO:" + numericID;
+
+        // Create an OWLLiteral from this string of the new ID.
+        OWLLiteral idLiteral = new OWLLiteralImplString(newID);
+
+        // Create a new annotation from this literal that contains the string of the new ID.
+        OWLAnnotation newIDAnnoation = factory.getOWLAnnotation(idAnnotationProperty, idLiteral);
+
+        // Create the assertion axiom for the new annotation containing the correct ID string.
+        OWLAnnotationAssertionAxiom newAnnAxiom = factory.getOWLAnnotationAssertionAxiom(cls.getIRI(), newIDAnnoation);
+
+        manager.applyChange(new AddAxiom(ont, newAnnAxiom));
+
+    }
 }
 
