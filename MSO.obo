@@ -10022,7 +10022,8 @@ name: E-box
 def: "A DNA region that exactly or largely matches the consensus sequence AWCAGCTGWT, typically located between -60 and +1 bp relative to a transcriptional start site, and that functions as a nondirectional subelement (i.e, typically appearing on both strands) of an RNA polymerase II promoter." [PMID:12537576\\\:16827941]
 synonym: "E-box motif" EXACT []
 xref: http://en.wikipedia.org/wiki/E_box
-is_a: MSO:0001659 ! promoter element
+is_a: MSO:0000235 ! transcription factor binding site of nucleic acid
+is_a: MSO:0001678 ! regulatory promoter element
 is_a: MSO:3000110 ! consensus sequence motif
 relationship: BFO:0000050 MSO:0000170 ! part of RNA polymerase II promoter
 property_value: IAO:0000118 "enhancer box" xsd:string {scope="EXACT"}
@@ -13285,7 +13286,7 @@ id: MSO:0001577
 name: complex transcript variant
 def: "A transcript variant including one or more complex indels (consisting of one or more insertions and/or deletions) that span exon/intron borders or coding sequence/UTR borders." [http://uswest.ensembl.org/info/docs/variation/index.html]
 comment: EBI term: Complex InDel - Insertion or deletion that spans an exon/intron border or a coding sequence/UTR border.
-synonym: "complex indel transcript variant" EXACT [http://uswest.ensembl.org/info/docs/variation/index.html] {scope="EXACT", type="ebi_variants"}
+synonym: "complex indel transcript variant" EXACT [http://uswest.ensembl.org/info/docs/variation/index.html] {type="ebi_variants", scope="EXACT"}
 is_a: MSO:0001576 ! transcript variant
 created_by: kareneilbeck
 creation_date: 2010-03-22T02:33:03Z
@@ -13399,7 +13400,7 @@ id: MSO:0001589
 name: frameshift variant
 def: "A coding sequence variant whose reading frame is variant by +/- 1 or 2 with respect to that of some other coding sequence.  This is caused by one or more sequence alterations that result in a net change in sequence length of +/- 1 or 2 and can cause translational disruption." [SO:ke]
 comment: EBI term:Frameshift variations - In coding sequence, resulting in a frameshift.
-synonym: "frameshift" EXACT [http://uswest.ensembl.org/info/docs/variation/index.html] {scope="EXACT", type="ebi_variants"}
+synonym: "frameshift" EXACT [http://uswest.ensembl.org/info/docs/variation/index.html] {type="ebi_variants", scope="EXACT"}
 is_a: MSO:0001818 ! protein-altering variant
 created_by: kareneilbeck
 creation_date: 2010-03-22T02:40:19Z
@@ -13706,7 +13707,7 @@ id: MSO:0001623
 name: 5-prime UTR variant
 def: "A sequence entity that is structurally variant with respect to a 5' untranslated region (UTR) of some transcript." [SO:ke]
 comment: EBI term: 5prime UTR variations - In 5prime UTR (untranslated region).
-synonym: "5' untranslated region variant" EXACT [http://uswest.ensembl.org/info/docs/variation/index.html] {scope="EXACT", type="ebi_variants"}
+synonym: "5' untranslated region variant" EXACT [http://uswest.ensembl.org/info/docs/variation/index.html] {type="ebi_variants", scope="EXACT"}
 is_a: MSO:0001622 ! UTR variant
 property_value: IAO:0000118 "5' UTR variant" xsd:string {scope="EXACT"}
 created_by: kareneilbeck
@@ -13958,7 +13959,8 @@ creation_date: 2010-07-19T01:24:44Z
 id: MSO:0001653
 name: retinoic-acid-responsive element
 def: "A transcription-factor-binding site of variable direct repeats of the sequence PuGGTCA spaced by five nucleotides (DR5), located within the promoter of a retinoic acid-responsive gene and to which retinoic acid receptors may bind." [PMID:11327309, PMID:19917671]
-is_a: MSO:0001659 ! promoter element
+is_a: MSO:0000235 ! transcription factor binding site of nucleic acid
+is_a: MSO:0001678 ! regulatory promoter element
 is_a: MSO:3000110 ! consensus sequence motif
 property_value: IAO:0000118 "RARE" xsd:string {scope="EXACT"}
 property_value: IAO:0000118 "retinoic acid responsive element" xsd:string {scope="EXACT"}
@@ -21476,8 +21478,6 @@ name: nucleotide strand region
 def: "A nucleic acid region that extends along a single nucleotide strand, representing a proper part of a single-strand nucleic acid or a base-paired nucleic acid strand." []
 is_a: MSO:3100210 ! nucleotide region
 is_a: MSO:3100246 ! macromolecular chain region
-intersection_of: MSO:0000001 {http://purl.obolibrary.org/obo/MSO_3100073="Included clause has_sequence_unit some 'nucleotide residue' because a self-pairing nucleotide strand could have a region part that is multi-stranded, and these are not to be covered by this class."} ! sequence molecular entity region
-intersection_of: BFO:0000050 MSO:3100174 {http://purl.obolibrary.org/obo/MSO_3100073="Included clause has_sequence_unit some 'nucleotide residue' because a self-pairing nucleotide strand could have a region part that is multi-stranded, and these are not to be covered by this class."} ! part of nucleotide strand
 property_value: IAO:0000118 "nucleotide chain region" xsd:string
 property_value: IAO:0000118 "nucleotide region" xsd:string
 property_value: MSO:3100073 "Avoided using 'nucleic acid strand region' as the label here, because base-paired strands are to be covered by this class, but are not considered nucleic acids." xsd:string
